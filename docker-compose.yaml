@@ -1,0 +1,42 @@
+services:
+  db:
+    restart: unless-stopped
+    image: postgres:17-alpine
+    container_name: incident-finder-db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-postgres}
+    networks:
+      - webnet
+  api:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: incident_finder_image
+    container_name: incident-finder-api
+    command: >
+      uvicorn incident_finder_api.main:app
+      --host 0.0.0.0
+      --port 8000
+      --reload
+    env_file:
+      - .env
+    volumes:
+      - ./src/:/app
+      - /app/.venv
+    ports:
+      - "8000:8000"
+    networks:
+      - webnet
+    depends_on:
+      - db
+
+volumes:
+  pgdata:
+
+networks:
+  webnet:
