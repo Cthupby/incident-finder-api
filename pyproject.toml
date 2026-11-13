@@ -30,6 +30,9 @@ dev = [
 
 [tool.mypy]
 python_version = "3.13"
+namespace_packages = true
+explicit_package_bases = true
+packages = ["incident_finder_api"]
 plugins = ["pydantic.mypy"]
 warn_return_any = true
 warn_unused_ignores = true
