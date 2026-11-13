@@ -6,7 +6,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        Path(__file__).resolve().parent.parent.parent / ".env",
+        env_file=Path(__file__).resolve().parent.parent.parent / ".env",
         env_file_encoding="utf-8",
         extra="ignore",
     )
@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     @property
     @computed_field
     def DATABASE_URI(self) -> PostgresDsn:
-        url = MultiHostUrl.build(
+        url = MultiHostUrl.build(  # type: ignore[attr-defined]
             scheme="postgresql+asyncpg",
             username=self.DB_USER,
             password=self.DB_PASSWORD,
